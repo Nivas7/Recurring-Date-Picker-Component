@@ -33,12 +33,13 @@ export const ORDINAL_NAMES = ['first', 'second', 'third', 'fourth', 'last'] as c
 
 export interface RecurringDateOptions {
   startDate: Date
-  endDate?: Date
-  recurrenceType: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  endDate?: Date | null
+  recurrenceType: 'daily' | 'weekly' | 'monthly' | 'yearly' | 'none'
   interval: number
   weekdaysOnly?: boolean
   selectedWeekdays?: number[]
   monthlyPattern?: 'date' | 'weekday'
+  monthlyDate?: number
   monthlyOrdinal?: 'first' | 'second' | 'third' | 'fourth' | 'last'
   monthlyWeekday?: number
   yearlyMonth?: number
@@ -47,7 +48,7 @@ export interface RecurringDateOptions {
 
 export function generateRecurringDates(
   options: RecurringDateOptions,
-  maxOccurrences: number = 50
+  maxOccurrences: number = 100
 ): Date[] {
   const {
     startDate,
@@ -57,107 +58,116 @@ export function generateRecurringDates(
     weekdaysOnly = false,
     selectedWeekdays = [1, 2, 3, 4, 5],
     monthlyPattern = 'date',
+    monthlyDate = getDate(startDate),
     monthlyOrdinal = 'first',
-    monthlyWeekday = 1,
-    yearlyMonth = 1,
-    yearlyDate = 1
+    monthlyWeekday = getDay(startDate),
+    yearlyMonth = getMonth(startDate) + 1,
+    yearlyDate = getDate(startDate)
   } = options
 
   const dates: Date[] = []
-  let currentDate = new Date(startDate)
-  let occurrenceCount = 0
+  let currentSearchDate = new Date(startDate)
+
+  if (recurrenceType === 'none') {
+    dates.push(new Date(startDate));
+    return dates;
+  }
+
+  let occurrenceCount = 0;
 
   while (occurrenceCount < maxOccurrences) {
-    if (endDate && isAfter(currentDate, endDate)) {
-      break
+    if (endDate && isAfter(currentSearchDate, endDate)) {
+      break;
     }
 
-    if (shouldIncludeDate(currentDate, { ...options, selectedWeekdays })) {
-      dates.push(new Date(currentDate))
-      occurrenceCount++
-    }
-
-    currentDate = getNextDate(currentDate, recurrenceType, interval)
-  }
-
-  return dates
-}
-
-function shouldIncludeDate(date: Date, options: RecurringDateOptions): boolean {
-  const { recurrenceType, weekdaysOnly = false, selectedWeekdays = [] } = options
-
-  if (recurrenceType === 'daily' && weekdaysOnly) {
-    const dayOfWeek = getDay(date)
-    return dayOfWeek >= 1 && dayOfWeek <= 5 // Monday to Friday
-  }
-
-  if (recurrenceType === 'weekly') {
-    const dayOfWeek = getDay(date)
-    return selectedWeekdays.includes(dayOfWeek)
-  }
-
-  return true
-}
-
-function getNextDate(
-  currentDate: Date,
-  recurrenceType: 'daily' | 'weekly' | 'monthly' | 'yearly',
-  interval: number
-): Date {
-  switch (recurrenceType) {
-    case 'daily':
-      return addDays(currentDate, interval)
-    case 'weekly':
-      return addWeeks(currentDate, interval)
-    case 'monthly':
-      return addMonths(currentDate, interval)
-    case 'yearly':
-      return addYears(currentDate, interval)
-    default:
-      return currentDate
-  }
-}
-
-export function generateMonthlyRecurringDates(
-  startDate: Date,
-  endDate: Date | null,
-  interval: number,
-  pattern: 'date' | 'weekday',
-  ordinal: 'first' | 'second' | 'third' | 'fourth' | 'last',
-  weekday: number,
-  maxOccurrences: number = 50
-): Date[] {
-  const dates: Date[] = []
-  let currentDate = new Date(startDate)
-  let occurrenceCount = 0
-
-  while (occurrenceCount < maxOccurrences) {
-    if (endDate && isAfter(currentDate, endDate)) {
-      break
-    }
-
-    if (pattern === 'date') {
-      const targetDate = getDate(startDate)
-      const monthStart = startOfMonth(currentDate)
-      const monthEnd = endOfMonth(currentDate)
-      const candidateDate = setDate(monthStart, targetDate)
-
-      if (candidateDate <= monthEnd) {
-        dates.push(candidateDate)
-        occurrenceCount++
+    if (recurrenceType === 'daily') {
+      // For daily, we just add the currentSearchDate if it matches weekdaysOnly.
+      // currentSearchDate itself advances by `interval` days.
+      if (!weekdaysOnly || (getDay(currentSearchDate) >= 1 && getDay(currentSearchDate) <= 5)) {
+        if (!dates.some(d => isSameDay(d, currentSearchDate))) {
+          dates.push(new Date(currentSearchDate));
+          occurrenceCount++;
+        }
       }
-    } else {
-      const targetDate = getNthWeekdayOfMonth(currentDate, ordinal, weekday)
-      if (targetDate) {
-        dates.push(targetDate)
-        occurrenceCount++
-      }
-    }
+      currentSearchDate = addDays(currentSearchDate, interval);
 
-    currentDate = addMonths(currentDate, interval)
+    } else if (recurrenceType === 'weekly') {
+      // For weekly, we iterate through the days of the current week (starting from currentSearchDate)
+      // to find all selected weekdays within this interval.
+      const startOfWeekForSearch = startOfWeek(currentSearchDate); // Get the Sunday of the current week
+      for (let i = 0; i < 7; i++) {
+        const candidateDate = addDays(startOfWeekForSearch, i);
+
+        // Only consider dates within the current interval's week and not before startDate
+        if (isBefore(candidateDate, startDate) && !isEqual(candidateDate, startDate)) {
+          continue;
+        }
+
+        if (endDate && isAfter(candidateDate, endDate)) {
+          // If we pass the endDate within this week, stop checking this week
+          break;
+        }
+
+        if (selectedWeekdays.includes(getDay(candidateDate))) {
+          if (!dates.some(d => isSameDay(d, candidateDate))) {
+            dates.push(new Date(candidateDate));
+            occurrenceCount++;
+            if (occurrenceCount >= maxOccurrences) break; // Stop if max occurrences reached
+          }
+        }
+      }
+      // Advance currentSearchDate by the interval for the next set of weeks
+      currentSearchDate = addWeeks(currentSearchDate, interval);
+
+    } else if (recurrenceType === 'monthly') {
+      let candidateInMonth: Date | null = null;
+      if (monthlyPattern === 'date') {
+        candidateInMonth = setDate(startOfMonth(currentSearchDate), monthlyDate);
+        // Handle cases where monthlyDate is beyond the end of the month (e.g., 31st in Feb)
+        if (getDate(candidateInMonth) !== monthlyDate && monthlyDate > 28 && isSameMonth(candidateInMonth, currentSearchDate)) {
+          candidateInMonth = null;
+        } else if (!isSameMonth(candidateInMonth, currentSearchDate)) { // If setDate rolled over to next month
+          candidateInMonth = null;
+        }
+      } else {
+        candidateInMonth = getNthWeekdayOfMonth(currentSearchDate, monthlyOrdinal, monthlyWeekday);
+      }
+
+      if (candidateInMonth && !isBefore(candidateInMonth, startDate)) {
+        if (!dates.some(d => isSameDay(d, candidateInMonth))) {
+          dates.push(new Date(candidateInMonth));
+          occurrenceCount++;
+        }
+      }
+      currentSearchDate = addMonths(currentSearchDate, interval);
+
+    } else if (recurrenceType === 'yearly') {
+      const targetMonthIndex = yearlyMonth - 1;
+      const targetDay = yearlyDate;
+
+      let candidateInYear: Date | null = setMonth(currentSearchDate, targetMonthIndex);
+      candidateInYear = setDate(candidateInYear, targetDay);
+
+      // Handle cases where yearlyDate is beyond the end of the month
+      if (getDate(candidateInYear) !== targetDay && targetDay > 28 && isSameMonth(candidateInYear, setMonth(currentSearchDate, targetMonthIndex))) {
+        candidateInYear = null;
+      } else if (!isSameMonth(candidateInYear, setMonth(currentSearchDate, targetMonthIndex))) {
+        candidateInYear = null;
+      }
+
+      if (candidateInYear && !isBefore(candidateInYear, startDate)) {
+        if (!dates.some(d => isSameDay(d, candidateInYear))) {
+          dates.push(new Date(candidateInYear));
+          occurrenceCount++;
+        }
+      }
+      currentSearchDate = addYears(currentSearchDate, interval);
+    }
   }
 
-  return dates
+  dates.sort((a, b) => a.getTime() - b.getTime());
+
+  return dates;
 }
 
 export function getNthWeekdayOfMonth(
@@ -198,6 +208,7 @@ export function formatRecurrencePattern(options: RecurringDateOptions): string {
     weekdaysOnly = false,
     selectedWeekdays = [],
     monthlyPattern = 'date',
+    monthlyDate = getDate(startDate),
     monthlyOrdinal = 'first',
     monthlyWeekday = 0,
     yearlyMonth = 1,
@@ -206,7 +217,9 @@ export function formatRecurrencePattern(options: RecurringDateOptions): string {
 
   let pattern = ''
 
-  if (recurrenceType === 'daily') {
+  if (recurrenceType === 'none') {
+    pattern = 'Once';
+  } else if (recurrenceType === 'daily') {
     pattern = weekdaysOnly
       ? 'Every weekday'
       : interval === 1 ? 'Daily' : `Every ${interval} days`
@@ -217,10 +230,9 @@ export function formatRecurrencePattern(options: RecurringDateOptions): string {
       : `Every ${interval} weeks on ${weekdayNames}`
   } else if (recurrenceType === 'monthly') {
     if (monthlyPattern === 'date') {
-      const date = getDate(startDate)
       pattern = interval === 1
-        ? `Monthly on day ${date}`
-        : `Every ${interval} months on day ${date}`
+        ? `Monthly on day ${monthlyDate}`
+        : `Every ${interval} months on day ${monthlyDate}`
     } else {
       const weekdayName = WEEKDAY_FULL_NAMES[monthlyWeekday ?? 0]
       pattern = interval === 1
@@ -275,7 +287,7 @@ export function validateRecurringDatePattern(options: {
   }
 
   if (options.hasEndDate && options.endDate && options.startDate) {
-    if (options.endDate <= options.startDate) {
+    if (isBefore(options.endDate, options.startDate)) {
       errors.push('End date must be after start date')
     }
   }

@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event'
 import { RecurringDatePicker } from '../index'
 import { useRecurringDatePickerStore } from '@/store/recurring-date-picker'
 
-// Mock the store
 jest.mock('@/store/recurring-date-picker')
 
 describe('RecurringDatePicker', () => {

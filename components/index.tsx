@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRecurringDatePickerStore } from '@/store/recurring-date-picker'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { DateSelectionPanel } from './dateSelectionPanel'
+import { DateSelectionPanel } from './dateSelectionPanel' // This component needs the alignment fix
 import { RecurrenceTypeSelector } from './recurrenceTypeSelector'
 import { DailyRecurrencePanel } from './dailyrecurrencePannel'
 import { WeeklyRecurrencePanel } from './weekelyReccurenceSelector'
@@ -26,7 +26,18 @@ export function RecurringDatePicker() {
 
   const [showSuccess, setShowSuccess] = useState(false)
 
-  const validationErrors = validateRecurringDatePattern(useRecurringDatePickerStore.getState())
+  // It's generally better to get state directly from the store for validation,
+  // as `useRecurringDatePickerStore.getState()` might not reflect the most
+  // up-to-date state if called outside of a React render cycle or effect.
+  // However, for immediate validation within render, this is acceptable.
+  const storeState = useRecurringDatePickerStore();
+  const validationErrors = validateRecurringDatePattern({
+    startDate: storeState.startDate,
+    endDate: storeState.endDate,
+    hasEndDate: storeState.hasEndDate,
+    recurrenceType: storeState.recurrenceType,
+    selectedWeekdays: storeState.selectedWeekdays,
+  });
   const isValid = validationErrors.length === 0
 
   const handleSave = () => {
@@ -114,7 +125,7 @@ export function RecurringDatePicker() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t">
+          <div className="flex justify-between pt-6 border-t border-border"> {/* Added border-border class */}
             <Button
               variant="outline"
               onClick={handleReset}

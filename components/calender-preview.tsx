@@ -85,7 +85,6 @@ export function CalendarPreview() {
       </CardHeader>
       <CardContent className="space-y-6">
 
-        {/* Calendar Navigation */}
         <div className="flex items-center justify-between">
           <Button
             variant="outline"
@@ -112,9 +111,7 @@ export function CalendarPreview() {
           </Button>
         </div>
 
-        {/* Calendar Grid */}
         <div className="w-full">
-          {/* Weekday Headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {WEEKDAY_NAMES.map((day) => (
               <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
@@ -123,7 +120,6 @@ export function CalendarPreview() {
             ))}
           </div>
 
-          {/* Calendar Days */}
           <div className="grid grid-cols-7 gap-1">
             {calendarDays.map((date) => (
               <div key={date.toISOString()} className="flex justify-center p-1">
@@ -138,7 +134,7 @@ export function CalendarPreview() {
         {/* Legend */}
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-accent rounded-full"></div>
+            <div className="w-4 h-4 bg-[var(--accent)] rounded-full"></div>
             <span className="text-muted-foreground">Start Date</span>
           </div>
           <div className="flex items-center gap-2">
@@ -151,7 +147,6 @@ export function CalendarPreview() {
           </div>
         </div>
 
-        {/* Statistics */}
         <div className="bg-muted rounded-lg p-4">
           <h4 className="font-medium text-foreground mb-2">Calendar Statistics</h4>
           <div className="grid grid-cols-2 gap-4 text-sm">

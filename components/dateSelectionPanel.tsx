@@ -1,8 +1,8 @@
 'use client'
 
 import { useRecurringDatePickerStore } from '@/store/recurring-date-picker'
-import { Input } from '@/components/ui//input'
-import { Label } from '@/components/ui/lable'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/lable' // Corrected import path
 import { Checkbox } from '@/components/ui/checkbox'
 import { Calendar } from 'lucide-react'
 
@@ -66,7 +66,7 @@ export function DateSelectionPanel() {
           <Label htmlFor="end-date" className="text-sm font-medium text-muted-foreground">
             End Date (Optional)
           </Label>
-          <div className="space-y-3">
+          <div className="flex gap-2 align-center items-center">
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="has-end-date"
@@ -78,8 +78,9 @@ export function DateSelectionPanel() {
               </Label>
             </div>
 
-            {hasEndDate && (
-              <div className="relative">
+
+            {hasEndDate ? (
+              <div className="relative mt-3">
                 <Input
                   id="end-date"
                   type="date"
@@ -89,6 +90,8 @@ export function DateSelectionPanel() {
                 />
                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               </div>
+            ) : (
+              <div className="h-10 mt-3"></div>
             )}
           </div>
         </div>
