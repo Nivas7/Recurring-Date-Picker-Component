@@ -16,8 +16,6 @@ export function DailyRecurrencePanel() {
         <CardDescription>Configure how often the event should repeat daily</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-
-        {/* Interval Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Repeat Frequency</Label>
           <div className="flex items-center space-x-4">
@@ -33,7 +31,6 @@ export function DailyRecurrencePanel() {
           </div>
         </div>
 
-        {/* Weekday Only Option */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Day Type</Label>
           <div className="flex items-center space-x-3">
@@ -51,7 +48,6 @@ export function DailyRecurrencePanel() {
           </p>
         </div>
 
-        {/* Examples */}
         <div className="bg-card rounded-lg p-4 border border-border">
           <h4 className="font-medium text-card-foreground mb-2">Examples:</h4>
           <ul className="text-sm text-muted-foreground space-y-1">

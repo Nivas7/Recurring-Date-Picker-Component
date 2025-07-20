@@ -25,7 +25,6 @@ export function YearlyRecurrencePanel() {
       </CardHeader>
       <CardContent className="space-y-6">
 
-        {/* Interval Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Repeat Frequency</Label>
           <div className="flex items-center space-x-4">
@@ -41,7 +40,6 @@ export function YearlyRecurrencePanel() {
           </div>
         </div>
 
-        {/* Date Configuration */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Date Configuration</Label>
           <div className="grid grid-cols-2 gap-4">
@@ -74,7 +72,6 @@ export function YearlyRecurrencePanel() {
           </div>
         </div>
 
-        {/* Preview */}
         <div className="bg-card rounded-lg p-4 border border-border">
           <h4 className="font-medium text-card-foreground mb-2">Current Configuration:</h4>
           <p className="text-sm text-muted-foreground">
@@ -82,7 +79,6 @@ export function YearlyRecurrencePanel() {
           </p>
         </div>
 
-        {/* Examples */}
         <div className="bg-card rounded-lg p-4 border border-border">
           <h4 className="font-medium text-card-foreground mb-2">Examples:</h4>
           <ul className="text-sm text-muted-foreground space-y-1">

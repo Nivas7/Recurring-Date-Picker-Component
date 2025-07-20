@@ -42,7 +42,6 @@ export function RecurringDatePicker() {
 
   const handleSave = () => {
     if (isValid) {
-      // In a real app, this would save to a database or API
       console.log('Saving recurring date pattern:', useRecurringDatePickerStore.getState())
       setShowSuccess(true)
       setTimeout(() => setShowSuccess(false), 3000)
@@ -67,7 +66,6 @@ export function RecurringDatePicker() {
         </CardHeader>
         <CardContent className="space-y-8">
 
-          {/* Success Message */}
           {showSuccess && (
             <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
               <div className="flex items-center">
@@ -85,7 +83,6 @@ export function RecurringDatePicker() {
             </div>
           )}
 
-          {/* Validation Errors */}
           {validationErrors.length > 0 && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
               <div className="flex">
@@ -108,13 +105,10 @@ export function RecurringDatePicker() {
             </div>
           )}
 
-          {/* Date Selection */}
           <DateSelectionPanel />
 
-          {/* Recurrence Type Selection */}
           <RecurrenceTypeSelector />
 
-          {/* Recurrence Pattern Configuration */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-card-foreground">Recurrence Pattern</h3>
 
@@ -124,8 +118,7 @@ export function RecurringDatePicker() {
             {recurrenceType === 'yearly' && <YearlyRecurrencePanel />}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t border-border"> {/* Added border-border class */}
+          <div className="flex justify-between pt-6 border-t border-border">
             <Button
               variant="outline"
               onClick={handleReset}
@@ -147,10 +140,8 @@ export function RecurringDatePicker() {
         </CardContent>
       </Card>
 
-      {/* Calendar Preview */}
       {startDate && <CalendarPreview />}
 
-      {/* Summary */}
       {startDate && <RecurrenceSummary />}
     </div>
   )

@@ -1,17 +1,8 @@
-/*
- * In Tailwind CSS v4, the explicit @tailwind directives are replaced by a single @import.
- * This simplifies the setup.
- */
 @import "tailwindcss";
 
 
 @layer base {
 
-  /*
-   * Default Theme (Light Mode)
-   * These variables will be applied by default because they are under :root.
-   * Note: The provided OKLCH values for :root appear to be for a light theme.
-   */
   :root {
     --background: oklch(0.9818 0.0054 95.0986);
     --foreground: oklch(0.3438 0.0269 95.7226);
@@ -61,11 +52,7 @@
     --spacing: 0.25rem;
   }
 
-  /*
-   * Dark Theme
-   * These variables will override the default only when the 'dark' class is present
-   * on the html or body tag.
-   */
+
   .dark {
     --background: oklch(0.2679 0.0036 106.6427);
     --foreground: oklch(0.8074 0.0142 93.0137);
@@ -101,11 +88,6 @@
     --sidebar-ring: oklch(0.7731 0 0);
   }
 
-  /*
-   * Global base styles that use the CSS variables.
-   * These will automatically pick up the values from :root (light by default)
-   * or from .dark if that class is applied.
-   */
   * {
     border-color: var(--border);
   }
@@ -114,14 +96,10 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
-    /* Using the font variable */
   }
 }
 
-/*
- * The @theme inline directive exposes your CSS variables to Tailwind CSS
- * so you can use them as utility classes (e.g., bg-background, text-primary).
- */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

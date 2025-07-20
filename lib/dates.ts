@@ -81,8 +81,6 @@ export function generateRecurringDates(
     }
 
     if (recurrenceType === 'daily') {
-      // For daily, we just add the currentSearchDate if it matches weekdaysOnly.
-      // currentSearchDate itself advances by `interval` days.
       if (!weekdaysOnly || (getDay(currentSearchDate) >= 1 && getDay(currentSearchDate) <= 5)) {
         if (!dates.some(d => isSameDay(d, currentSearchDate))) {
           dates.push(new Date(currentSearchDate));
@@ -92,19 +90,16 @@ export function generateRecurringDates(
       currentSearchDate = addDays(currentSearchDate, interval);
 
     } else if (recurrenceType === 'weekly') {
-      // For weekly, we iterate through the days of the current week (starting from currentSearchDate)
-      // to find all selected weekdays within this interval.
-      const startOfWeekForSearch = startOfWeek(currentSearchDate); // Get the Sunday of the current week
+
+      const startOfWeekForSearch = startOfWeek(currentSearchDate);
       for (let i = 0; i < 7; i++) {
         const candidateDate = addDays(startOfWeekForSearch, i);
 
-        // Only consider dates within the current interval's week and not before startDate
         if (isBefore(candidateDate, startDate) && !isEqual(candidateDate, startDate)) {
           continue;
         }
 
         if (endDate && isAfter(candidateDate, endDate)) {
-          // If we pass the endDate within this week, stop checking this week
           break;
         }
 
@@ -112,21 +107,19 @@ export function generateRecurringDates(
           if (!dates.some(d => isSameDay(d, candidateDate))) {
             dates.push(new Date(candidateDate));
             occurrenceCount++;
-            if (occurrenceCount >= maxOccurrences) break; // Stop if max occurrences reached
+            if (occurrenceCount >= maxOccurrences) break;
           }
         }
       }
-      // Advance currentSearchDate by the interval for the next set of weeks
       currentSearchDate = addWeeks(currentSearchDate, interval);
 
     } else if (recurrenceType === 'monthly') {
       let candidateInMonth: Date | null = null;
       if (monthlyPattern === 'date') {
         candidateInMonth = setDate(startOfMonth(currentSearchDate), monthlyDate);
-        // Handle cases where monthlyDate is beyond the end of the month (e.g., 31st in Feb)
         if (getDate(candidateInMonth) !== monthlyDate && monthlyDate > 28 && isSameMonth(candidateInMonth, currentSearchDate)) {
           candidateInMonth = null;
-        } else if (!isSameMonth(candidateInMonth, currentSearchDate)) { // If setDate rolled over to next month
+        } else if (!isSameMonth(candidateInMonth, currentSearchDate)) {
           candidateInMonth = null;
         }
       } else {

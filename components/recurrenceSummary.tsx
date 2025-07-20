@@ -50,13 +50,11 @@ export function RecurrenceSummary() {
       </CardHeader>
       <CardContent className="space-y-6">
 
-        {/* Pattern Description */}
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
           <h4 className="font-medium text-primary mb-2">Your Pattern</h4>
           <p className="text-sm text-primary/80">{patternDescription}</p>
         </div>
 
-        {/* Next Occurrences */}
         <div className="space-y-3">
           <h4 className="font-medium text-card-foreground">Next 5 Occurrences</h4>
           <div className="space-y-2">
@@ -81,7 +79,6 @@ export function RecurrenceSummary() {
           </div>
         </div>
 
-        {/* Pattern Details */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-muted rounded-lg p-4">
             <h4 className="font-medium text-foreground mb-2">Pattern Type</h4>
@@ -98,7 +95,6 @@ export function RecurrenceSummary() {
           </div>
         </div>
 
-        {/* Additional Details */}
         <div className="space-y-3">
           <h4 className="font-medium text-card-foreground">Configuration Details</h4>
           <div className="bg-muted rounded-lg p-4 space-y-2">

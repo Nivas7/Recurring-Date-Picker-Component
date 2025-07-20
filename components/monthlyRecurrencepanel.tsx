@@ -28,7 +28,6 @@ export function MonthlyRecurrencePanel() {
       </CardHeader>
       <CardContent className="space-y-6">
 
-        {/* Interval Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Repeat Frequency</Label>
           <div className="flex items-center space-x-4">
@@ -44,7 +43,6 @@ export function MonthlyRecurrencePanel() {
           </div>
         </div>
 
-        {/* Pattern Selection */}
         <div className="space-y-3">
           <Label className="text-sm font-medium text-foreground">Monthly Pattern</Label>
           <RadioGroup
@@ -67,7 +65,6 @@ export function MonthlyRecurrencePanel() {
           </RadioGroup>
         </div>
 
-        {/* Weekday Pattern Configuration */}
         {monthlyPattern === 'weekday' && (
           <div className="space-y-4 p-4 bg-card rounded-lg border border-border">
             <Label className="text-sm font-medium text-foreground block">
@@ -102,7 +99,6 @@ export function MonthlyRecurrencePanel() {
           </div>
         )}
 
-        {/* Examples */}
         <div className="bg-card rounded-lg p-4 border border-border">
           <h4 className="font-medium text-card-foreground mb-2">Examples:</h4>
           <ul className="text-sm text-muted-foreground space-y-1">

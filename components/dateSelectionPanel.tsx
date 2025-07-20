@@ -2,7 +2,7 @@
 
 import { useRecurringDatePickerStore } from '@/store/recurring-date-picker'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/lable' // Corrected import path
+import { Label } from '@/components/ui/lable'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Calendar } from 'lucide-react'
 
@@ -44,7 +44,6 @@ export function DateSelectionPanel() {
       <h3 className="text-lg font-semibold text-card-foreground">Date Selection</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Start Date */}
         <div className="space-y-2">
           <Label htmlFor="start-date" className="text-sm font-medium text-muted-foreground">
             Start Date *
@@ -61,7 +60,6 @@ export function DateSelectionPanel() {
           </div>
         </div>
 
-        {/* End Date */}
         <div className="space-y-2">
           <Label htmlFor="end-date" className="text-sm font-medium text-muted-foreground">
             End Date (Optional)

@@ -8,11 +8,11 @@ const initialState = {
   recurrenceType: 'daily' as const,
   interval: 1,
   weekdaysOnly: false,
-  selectedWeekdays: [1, 2, 3, 4, 5], // Monday to Friday
+  selectedWeekdays: [1, 2, 3, 4, 5],
   monthlyPattern: 'date' as const,
   monthlyOrdinal: 'first' as const,
-  monthlyWeekday: 1, // Monday
-  yearlyMonth: 1, // January
+  monthlyWeekday: 1,
+  yearlyMonth: 1,
   yearlyDate: 1,
   isAdvancedMode: false,
 }

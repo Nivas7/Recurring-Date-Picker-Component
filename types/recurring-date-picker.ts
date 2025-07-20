@@ -5,29 +5,22 @@ export type MonthlyPattern = 'date' | 'weekday'
 export type MonthlyOrdinal = 'first' | 'second' | 'third' | 'fourth' | 'last'
 
 export interface RecurringDatePickerState {
-  // Core date settings
   startDate: Date | null
   endDate: Date | null
   hasEndDate: boolean
-
-  // Recurrence settings
   recurrenceType: RecurrenceType
   interval: number
 
-  // Weekly/Daily specific
   weekdaysOnly: boolean
   selectedWeekdays: number[]
 
-  // Monthly specific
   monthlyPattern: MonthlyPattern
   monthlyOrdinal: MonthlyOrdinal
   monthlyWeekday: number
 
-  // Yearly specific
   yearlyMonth: number
   yearlyDate: number
 
-  // UI state
   isAdvancedMode: boolean
 }
 
